@@ -2,14 +2,17 @@
 import { useRouter } from 'vue-router'
 import { ref } from 'vue'
 import { auth } from '../auth'
+import { Auth } from '../auth'
 
 const router = useRouter()
 const email = defineModel<string>('email')
 const password = defineModel<string>('password')
 const errorMessage = ref('')
 const awaiting = ref(false)
+const remember = defineModel<boolean>('remember', { default: true })
 
-function onSubmit(form: Event) {
+async function onSubmit(form: Event) {
+  let auth = new Auth(remember.value)
   awaiting.value = true
   auth.signIn(
     email.value || '',
@@ -17,6 +20,7 @@ function onSubmit(form: Event) {
     () => {
       awaiting.value = false
       router.push('/')
+      errorMessage.value = ''
     },
     () => {
       awaiting.value = false
@@ -35,7 +39,10 @@ function onSubmit(form: Event) {
       <input v-model="email" type="email" /><br />
       <label>Senha: </label>
       <input v-model="password" type="password" /><br />
+      <label>Remember Me: </label>
+      <input v-model="remember" type="checkbox" /><br />
       <button type="submit" v-show="!awaiting">Sign In</button>
     </form>
+    <div v-if="errorMessage" style="color: red">{{ errorMessage }}</div>
   </div>
 </template>
