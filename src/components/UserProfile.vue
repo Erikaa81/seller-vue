@@ -1,8 +1,10 @@
 <script setup lang="ts">
-import { auth } from '../auth'
-import { ref } from 'vue'
+import { Auth } from '../auth'
+import { ref, watch, type Ref } from 'vue'
+const auth = new Auth()
 const isLoggedIn = ref(auth.isLoggedIn())
 const currentUser = ref(auth.currentUser())
+
 const signOut = function () {
   auth.signOut(() => (isLoggedIn.value = auth.isLoggedIn()))
 }
@@ -10,7 +12,8 @@ const signOut = function () {
 <template>
   <main>
     <template v-if="isLoggedIn">
-      <h4>{{ 'Login successful!' }}</h4>
+      <h4>{{ 'Successful login!' }}</h4>
+
       <h3>Welcome to Delivery, {{ currentUser && currentUser.email }}!</h3>
       <br />
       <nav>
