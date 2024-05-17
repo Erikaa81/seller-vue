@@ -16,7 +16,6 @@ function failure(response: Response, onFailure: () => void) {
 function isLoggedIn() {
   return Boolean(storage.get('token'))
 }
-
 function signOut(andThen: () => void = () => {}) {
   storage.remove('token')
   storage.remove('email')
@@ -30,6 +29,41 @@ function currentUser() {
   }
   return {
     email: storage.get('email')
+  }
+}
+async function register(
+  email: string,
+  password: string,
+  password_confirmation: string
+): Promise<void> {
+  const body = {
+    user: {
+      email: email,
+      password: password,
+      password_confirmation: password_confirmation
+    }
+  }
+
+  try {
+    const response = await fetch('http://localhost:3000/new', {
+      method: 'POST',
+      headers: {
+        Accept: 'application/json',
+        'Content-Type': 'application/json',
+        'X-API_KEY': '84i3hVGseg8kJ9XtummWlWBn8JA='
+      },
+      body: JSON.stringify(body)
+    })
+
+    if (response.ok) {
+      const userData = await response.json()
+     
+    } else {
+      throw new Error('Failed to register')
+    }
+  } catch (error) {
+    console.error('Erro durante o registro:', error)
+    throw new Error('Failed to register')
   }
 }
 
@@ -50,7 +84,8 @@ async function signIn(
     method: 'POST',
     headers: {
       Accept: 'application/json',
-      'Content-Type': 'application/json'
+      'Content-Type': 'application/json',
+      'X-API_KEY': '84i3hVGseg8kJ9XtummWlWBn8JA='
     },
     body: JSON.stringify(body)
   }).then((response) => {
@@ -66,7 +101,8 @@ export const auth = {
   signIn,
   isLoggedIn,
   currentUser,
-  signOut
+  signOut,
+  register,
 }
 import { createStorage, type SimpleStorage } from './storage'
 class Auth {
@@ -96,11 +132,14 @@ class Auth {
     }
     return {
       email: this.getFallback('email')
+      
     }
   }
   isLoggedIn() {
     return Boolean(this.getFallback('token'))
   }
+
+ 
   signOut(andThen = () => {}) {
     let transient = createStorage(false)
     let persistent = createStorage(true)
@@ -110,8 +149,7 @@ class Auth {
     persistent.remove('email')
     andThen()
   }
-
-  async signIn(email: string, password: string, onSuccess: () => void, onFailure: () => void) {
+   async signIn(email: string, password: string, onSuccess: () => void, onFailure: () => void) {
     const body = {
       login: {
         email: email,
@@ -122,7 +160,8 @@ class Auth {
       method: 'POST',
       headers: {
         Accept: 'application/json',
-        'Content-Type': 'application/json'
+        'Content-Type': 'application/json',
+        'X-API_KEY': '84i3hVGseg8kJ9XtummWlWBn8JA='
       },
       body: JSON.stringify(body)
     }).then((response) => {
@@ -133,5 +172,38 @@ class Auth {
       }
     })
   }
+  async register(email: string, password: string, password_confirmation: string): Promise<void> {
+    const body = {
+      user: {
+        email: email,
+        password: password,
+        password_confirmation: password_confirmation
+      }
+    }
+  
+    try {
+      const response = await fetch('http://localhost:3000/new', {
+        method: 'POST',
+        headers: {
+          Accept: 'application/json',
+          'Content-Type': 'application/json',
+          'X-API_KEY': '84i3hVGseg8kJ9XtummWlWBn8JA='
+        },
+        body: JSON.stringify(body)
+      })
+  
+      if (response.ok) {
+        const userData = await response.json()
+        this.storage.store('token', userData.token)
+        this.storage.store('email', userData.email)
+      } else {
+        throw new Error('Failed to register')
+      }
+    } catch (error) {
+      console.error('Erro durante o registro:', error)
+      throw new Error('Failed to register')
+    }
+  }
 }
-export { Auth }
+
+export { Auth } 
