@@ -25,6 +25,7 @@ const signOut = function () {
       <br />
       <nav>
         <RouterLink :to="{ name: 'signin' }"> Sign In </RouterLink>
+        <RouterLink :to="{ name: 'new' }"> Register </RouterLink>
       </nav>
     </template>
   </main>
