@@ -17,6 +17,9 @@ const signOut = function () {
       <h3>Welcome to Delivery, {{ currentUser && currentUser.email }}!</h3>
       <br />
       <nav>
+        <RouterLink :to="{ name: 'stores' }"> Lojas </RouterLink>
+      </nav>
+      <nav>
         <a @click="signOut">Sign Out</a>
       </nav>
     </template>
