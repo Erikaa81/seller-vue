@@ -57,7 +57,6 @@ async function register(
 
     if (response.ok) {
       const userData = await response.json()
-     
     } else {
       throw new Error('Failed to register')
     }
@@ -102,7 +101,7 @@ export const auth = {
   isLoggedIn,
   currentUser,
   signOut,
-  register,
+  register
 }
 import { createStorage, type SimpleStorage } from './storage'
 class Auth {
@@ -133,14 +132,12 @@ class Auth {
     return {
       email: this.getFallback('email'),
       token: this.getFallback('token')
-  
     }
   }
   isLoggedIn() {
     return Boolean(this.getFallback('token'))
   }
 
- 
   signOut(andThen = () => {}) {
     let transient = createStorage(false)
     let persistent = createStorage(true)
@@ -150,7 +147,7 @@ class Auth {
     persistent.remove('email')
     andThen()
   }
-   async signIn(email: string, password: string, onSuccess: () => void, onFailure: () => void) {
+  async signIn(email: string, password: string, onSuccess: () => void, onFailure: () => void) {
     const body = {
       login: {
         email: email,
@@ -181,7 +178,7 @@ class Auth {
         password_confirmation: password_confirmation
       }
     }
-  
+
     try {
       const response = await fetch('http://localhost:3000/new', {
         method: 'POST',
@@ -192,7 +189,7 @@ class Auth {
         },
         body: JSON.stringify(body)
       })
-  
+
       if (response.ok) {
         const userData = await response.json()
         this.storage.store('token', userData.token)
@@ -207,4 +204,4 @@ class Auth {
   }
 }
 
-export { Auth } 
+export { Auth }

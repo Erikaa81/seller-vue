@@ -1,32 +1,32 @@
 <script setup lang="ts">
-import { useRouter } from 'vue-router';
-import { ref } from 'vue';
-import { Auth } from '../auth';
+import { useRouter } from 'vue-router'
+import { ref } from 'vue'
+import { Auth } from '../auth'
 
-const router = useRouter();
-const email = ref('');
-const password = ref('');
-const passwordConfirmation = ref('');
-const errorMessage = ref('');
-const awaiting = ref(false);
-const registerSuccess = ref(false); // Adicionando uma nova referência para controlar o sucesso do registro
+const router = useRouter()
+const email = ref('')
+const password = ref('')
+const passwordConfirmation = ref('')
+const errorMessage = ref('')
+const awaiting = ref(false)
+const registerSuccess = ref(false) // Adicionando uma nova referência para controlar o sucesso do registro
 
-const auth = new Auth();
+const auth = new Auth()
 
 async function onSubmit() {
-  awaiting.value = true;
+  awaiting.value = true
 
   try {
-    await auth.register(email.value, password.value, passwordConfirmation.value);
-    registerSuccess.value = true; // Definindo o sucesso do registro como verdadeiro
-    router.push('/'); 
-    
+    await auth.register(email.value, password.value, passwordConfirmation.value)
+    registerSuccess.value = true // Definindo o sucesso do registro como verdadeiro
+    router.push('/')
+
     // router.push('/'); / Redirecionar para a página inicial após o registro
-    errorMessage.value = '';
+    errorMessage.value = ''
   } catch (error) {
-    awaiting.value = false;
-    console.error('Erro durante o registro:', error);
-    errorMessage.value = 'Ocorreu um erro durante o registro.';
+    awaiting.value = false
+    console.error('Erro durante o registro:', error)
+    errorMessage.value = 'Ocorreu um erro durante o registro.'
   }
 }
 </script>
