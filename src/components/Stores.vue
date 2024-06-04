@@ -1,3 +1,74 @@
+<script setup lang="ts">
+import { ref, onMounted } from 'vue'
+import { useRouter } from 'vue-router'
+import { stores } from '../stores'
+
+const storeName = ref('')
+const message = ref('')
+const alertType = ref('')
+const userStores = ref()
+const storesMessage = ref('')
+
+const router = useRouter()
+
+const handleSubmit = async () => {
+  try {
+    const response = await stores.newStore(storeName.value)
+    if (response.success) {
+      message.value = response.message || 'Loja criada com sucesso!'
+      alertType.value = 'success'
+      await fetchStores()
+    } else {
+      message.value = response.message || 'Falha ao criar loja.'
+      alertType.value = 'danger'
+    }
+  } catch (error) {
+    message.value = 'Erro ao criar loja.'
+    alertType.value = 'danger'
+  }
+}
+
+const fetchStores = async () => {
+  try {
+    const response = await stores.getStores()
+    if (response.stores && response.stores.length) {
+      userStores.value = response.stores
+    } else {
+      storesMessage.value = response.message || 'Falha ao obter lojas.'
+    }
+  } catch (error) {
+    storesMessage.value = 'Erro ao obter lojas.'
+  }
+}
+
+const editStore = (storeId: number) => {
+  router.push({ name: 'editStore', params: { id: storeId, name: storeName.value } })
+}
+
+const handleDeleteStore = async (storeId: number) => {
+  try {
+    await stores.deleteStore(storeId)
+    // await fetchStores()
+    userStores.value = userStores.value.filter((store: { id: number; }) => store.id !== storeId) 
+    message.value = 'Loja excluída com sucesso.'
+    alertType.value = 'success'
+  } catch (error) {
+    message.value = 'Erro ao excluir loja.'
+    alertType.value = 'danger'
+  }
+
+return {
+      message,
+      alertType,
+      handleDeleteStore
+    }
+  }
+
+onMounted(() => {
+  fetchStores()
+})
+</script>
+
 <template>
   <div>
     <h1>Criar Nova Loja</h1>
@@ -16,70 +87,29 @@
     <ul>
       <li v-for="store in userStores" :key="store.id">
         {{ store.name }}
-        <button @click="editStore(store.id)" class="edit-button">Editar</button>
+        <div v-if="store.image_url">  
+          <img :src="store.image_url">
+        </div>
+        <div v-else>
+          <img src= "../assets/dummy.jpg">
+        </div>
         <br />
+        <nav>
+          <RouterLink :to="{ name: 'products', params: { storeId: store.id } }">
+          Produtos </RouterLink 
+          >
+        </nav>
+        <button @click="editStore(store.id)">Editar</button>
+        <button @click="handleDeleteStore(store.id)">Excluir</button>
+      
       </li>
     </ul>
     <div v-if="storesMessage" class="alert alert-danger">
       {{ storesMessage }}
     </div>
     <br />
-    
   </div>
 </template>
-
-<script setup lang="ts">
-import { ref, onMounted } from 'vue';
-import { useRouter } from 'vue-router';
-import { stores } from '../stores';
-import { auth } from '@/auth';
-const storeName = ref('');
-const message = ref('');
-const alertType = ref('');
-const userStores = ref();
-const storesMessage = ref('');
-
-
-const router = useRouter();
-
-const handleSubmit = async () => {
-  try {
-    const response = await stores.newStore(storeName.value);
-    if (response.success) {
-      message.value = response.message || 'Loja criada com sucesso!';
-      alertType.value = 'success';
-      await fetchStores();
-    } else {
-      message.value = response.message || 'Falha ao criar loja.';
-      alertType.value = 'danger';
-    }
-  } catch (error) {
-    message.value = 'Erro ao criar loja.';
-    alertType.value = 'danger';
-  }
-};
-
-const fetchStores = async () => {
-  try {
-    const response = await stores.getStores();
-    if (response.stores && response.stores.length) {
-      userStores.value = response.stores;
-    } else {
-      storesMessage.value = response.message || 'Falha ao obter lojas.';
-    }
-  } catch (error) {
-    storesMessage.value = 'Erro ao obter lojas.';
-  }
-};
-
-const editStore = (storeId: number) => {
-  router.push({ name: 'editStore', params: { id: storeId , name: storeName.value} });
-};
-
-onMounted(() => {
-  fetchStores();
-});
-</script>
 
 <style scoped>
 .form-group {
@@ -89,6 +119,10 @@ onMounted(() => {
 label {
   display: block;
   margin-bottom: 5px;
+}
+img {
+  width: 80px;
+  height: 80px;
 }
 
 input {
@@ -136,12 +170,5 @@ li {
   margin-bottom: 5px;
   border: 1px solid #ddd;
   border-radius: 4px;
-  
-}
-
-.edit-button {
-  font-size: 14px;
-  cursor: pointer;
-  float: right;
 }
 </style>

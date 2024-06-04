@@ -1,19 +1,3 @@
-<template>
-  <div>
-    <h1>Editar Loja</h1>
-    <form @submit.prevent="handleSubmit">
-      <div class="form-group">
-        <label for="store-name">Nome da Loja:</label>
-        <input id="store-name" v-model="name_store" type="text" required />
-      </div>
-      <button type="submit">Salvar</button>
-    </form>
-    <div v-if="message" :class="'alert alert-${alertType}'">
-      {{ message }}
-    </div>
-  </div>
-</template>
-
 <script setup lang="ts">
 import { ref, onMounted } from 'vue'
 import { useRoute } from 'vue-router'
@@ -21,17 +5,19 @@ import { stores } from '../stores'
 
 const route = useRoute()
 const storeId = route.params.id
-const storeName = route.params.name
-
+const selectedFile = ref<File | null>(null)
 const name_store = ref('')
 const message = ref('')
 const alertType = ref('')
+const imageUrl = ref('')
+
 
 const fetchStore = async () => {
   try {
-    const response = await stores.getStore(storeId, storeName)
+    const response = await stores.getStore(storeId, name_store)
     if (response) {
       name_store.value = response.store.name
+      imageUrl.value = response.store.image_url || ''
     } else {
       message.value = 'Falha ao obter dados da loja.'
       alertType.value = 'danger'
@@ -45,23 +31,50 @@ const fetchStore = async () => {
 const handleSubmit = async () => {
   try {
     const response = await stores.editStore(name_store.value, storeId)
-    if (response.success) {
-      message.value = response.message || 'Loja editada com sucesso!'
-      alertType.value = 'success'
-    } else {
-      message.value = response.message || 'Falha ao editar loja.'
-      alertType.value = 'danger'
+    if (selectedFile.value) {
+      await stores.uploadImageStore(selectedFile.value, parseInt(storeId as string))
     }
+    message.value = response.message || 'Loja editada com sucesso!'
+    alertType.value = 'success'
+    await fetchStore() 
   } catch (error) {
     message.value = 'Erro ao editar loja.'
     alertType.value = 'danger'
   }
 }
 
-onMounted(() => {
-  fetchStore()
-})
+const onFileChange = (event: Event) => {
+  const target = event.target as HTMLInputElement
+  if (target.files && target.files.length > 0) {
+    selectedFile.value = target.files[0]
+    imageUrl.value = URL.createObjectURL(selectedFile.value) 
+  }
+}
+
+onMounted(fetchStore)
+
+
 </script>
+<template>
+  <div>
+    <h1>Editar Loja</h1>
+    <form @submit.prevent="handleSubmit">
+      <div class="form-group">
+        <label for="store-name">Nome da Loja:</label>
+        <input id="store-name" v-model="name_store" type="text" required />
+      </div>
+      <div>
+        <label for="image">Imagem da Loja:</label>
+        <input type="file" @change="onFileChange" id="image" />
+      </div>
+      <button type="submit">Salvar</button>
+    </form>
+    <div v-if="message" :class="'alert alert-' + alertType">
+      {{ message }}
+    </div>
+  </div>
+</template>
+
 
 <style scoped>
 .form-group {

@@ -2,7 +2,7 @@ import { Auth } from './auth'
 import router from '@/router'
 
 interface StoreResponse {
-  store: { name: string }
+  store: { name: string}
 }
 async function getStores(): Promise<{ stores: StoreResponse[]; message?: string }> {
   const auth = new Auth()
@@ -146,7 +146,7 @@ async function getStore(
 async function deleteStore(store_id: any) {
   const auth = new Auth()
   const currentUser = auth.currentUser()
-  const response = await fetch(import.meta.env.VITE_BASE_URL + '/stores/store_id', {
+  const response = await fetch(`http://127.0.0.1:3000/stores/${store_id}`,{
     method: 'DELETE',
     headers: {
       Accept: 'application/json',
@@ -163,22 +163,23 @@ async function deleteStore(store_id: any) {
   }
 }
 
-async function uploadImageStore(imagem: File, store_id: number) {
+async function uploadImageStore(image: File, store_id: number) {
   const auth = new Auth()
   const currentUser = auth.currentUser()
-  if (imagem) {
-    const formData = new FormData()
-    formData.append('store[image]', imagem)
-    const response = await fetch(import.meta.env.VITE_BASE_URL + '/stores/store_id', {
-      method: 'PUT',
-      headers: {
-        Accept: 'application/json',
-        Authorization: 'Bearer' + ' ' + currentUser?.token
-      },
-      body: formData
-    })
-  } else {
-    console.error('Nenhuma imagem selecionada.')
+  const formData = new FormData()
+  formData.append('store[image]', image)
+  const response = await fetch(`http://127.0.0.1:3000/stores/${store_id}`, {
+    method: 'PUT',
+    headers: {
+      Accept: 'application/json',
+      Authorization: 'Bearer' + ' ' + currentUser?.token
+    },
+    body: formData
+  })
+
+  if (!response.ok) {
+    const errorData = await response.json()
+    throw new Error(errorData.message || 'Failed to upload image')
   }
 }
 
