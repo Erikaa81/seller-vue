@@ -4,6 +4,11 @@ import WelcomeView from '../views/Welcome.vue'
 import Registration from '../components/Registration.vue'
 import Stores from '../components/Stores.vue'
 import EditStore from '../components/EditStore.vue'
+import Products from '../components/Products.vue'
+import AddProducts from '../components/AddProducts.vue'
+import EditProduct from '../components/EditProduct.vue'
+
+import { editProduct } from '@/products'
 
 const router = createRouter({
   history: createWebHistory(import.meta.env.BASE_URL),
@@ -29,12 +34,41 @@ const router = createRouter({
       component: Stores
     },
     {
-      path: '/edit/:id',
+      path: '/stores/:id',
       name: 'editStore',
       component: EditStore,
-      props: true,
+      props: true
+    },
+    {
+      path: '/stores/products',
+      name: 'storeProducts',
+      component: AddProducts,
+      props: true
+    },
+    {
+      path: '/products/store/:storeId',
+      name: 'products',
+      component: Products,
+      props: true
+    },
+    {
+      path: '/stores/:storeId/product/:productId',
+      name: 'editProduct',
+      component: EditProduct,
+      props: true
+    },
+    {
+      path: '/products/:productId/image',
+      name: 'editProductImage',
+      component: EditProduct,
+      props: true
+    },
+    {
+      path: '/products/:productId',
+      name: 'product-delete',
+      component: Products,
+      props: true
     }
   ]
- })
+})
 export default router
-
