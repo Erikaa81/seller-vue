@@ -13,9 +13,10 @@
     "lint": "eslint . --ext .vue,.js,.jsx,.cjs,.mjs,.ts,.tsx,.cts,.mts --fix --ignore-path .gitignore",
     "format": "prettier --write src/",
     "type": "vue-tsc --build --force --watch"
-
   },
   "dependencies": {
+    "@microsoft/fetch-event-source": "^2.0.1",
+    "axios": "^1.7.2",
     "vue": "^3.4.21",
     "vue-router": "^4.3.0"
   },
