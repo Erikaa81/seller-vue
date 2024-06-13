@@ -2,12 +2,21 @@
 import { ref, onMounted } from 'vue'
 import { useRouter } from 'vue-router'
 import { stores } from '../stores'
+import type { Store } from '../types';
 
 const storeName = ref('')
 const message = ref('')
+
 const alertType = ref('')
 const userStores = ref()
 const storesMessage = ref('')
+const waiting = ref<Store>()
+const selectedStoreId = ref<number | null>(null);
+
+function waitOrders(store: Store) {
+  selectedStoreId.value = store.id;
+  router.push({ name: 'DetalhesPedido', params: { id: store.id } });
+}
 
 const router = useRouter()
 
@@ -48,7 +57,6 @@ const editStore = (storeId: number) => {
 const handleDeleteStore = async (storeId: number) => {
   try {
     await stores.deleteStore(storeId)
-    // await fetchStores()
     userStores.value = userStores.value.filter((store: { id: number; }) => store.id !== storeId) 
     message.value = 'Loja excluída com sucesso.'
     alertType.value = 'success'
@@ -60,7 +68,8 @@ const handleDeleteStore = async (storeId: number) => {
 return {
       message,
       alertType,
-      handleDeleteStore
+      handleDeleteStore,
+      waitOrders
     }
   }
 
@@ -97,20 +106,19 @@ onMounted(() => {
         <nav>
           <RouterLink :to="{ name: 'products', params: { storeId: store.id } }">
           Produtos </RouterLink 
-          >
+          >          
         </nav>
         <button @click="editStore(store.id)">Editar</button>
         <button @click="handleDeleteStore(store.id)">Excluir</button>
-      
+           <br>
+           <nav>
+          <RouterLink :to="{ name: 'pedidos', params: { storeId: store.id } }">Pedidos</RouterLink>
+        </nav>
       </li>
     </ul>
-    <div v-if="storesMessage" class="alert alert-danger">
-      {{ storesMessage }}
-    </div>
-    <br />
   </div>
+ 
 </template>
-
 <style scoped>
 .form-group {
   margin-bottom: 15px;
