@@ -1,5 +1,7 @@
 import { Auth } from './auth'
 import router from '@/router'
+import type { Order } from './types';
+
 
 interface StoreResponse {
   store: { name: string}
@@ -183,6 +185,19 @@ async function uploadImageStore(image: File, store_id: number) {
   }
 }
 
+export async function fetchOrderDetails(storeId: number): Promise<Order> {
+  try {
+    const response = await fetch(`/stores/${storeId}/orders/new`); // Utiliza o parâmetro storeId dinâmico
+    console.log(response); 
+    if (!response.ok) {
+      throw new Error('Erro ao buscar detalhes do pedido.');
+    }
+    return response.json() as Promise<Order>;
+  } catch (error) {
+    console.error('Erro na requisição:', error);
+    throw error;
+  }
+}
 export const stores = {
   getStore,
   getStores,

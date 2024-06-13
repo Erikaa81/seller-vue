@@ -28,9 +28,11 @@ function currentUser() {
     return null
   }
   return {
-    email: storage.get('email')
+    email: storage.get('email'),
+    token: storage.get('token'),
   }
 }
+
 async function register(
   email: string,
   password: string,
@@ -71,8 +73,7 @@ async function signIn(
   password: string,
   onSuccess: () => void,
   onFailure: () => void
-) {
-  const body = {
+) { const body = {
     login: {
       email: email,
       password: password

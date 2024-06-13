@@ -7,8 +7,8 @@ import EditStore from '../components/EditStore.vue'
 import Products from '../components/Products.vue'
 import AddProducts from '../components/AddProducts.vue'
 import EditProduct from '../components/EditProduct.vue'
-
-import { editProduct } from '@/products'
+import DetalhesPedidos from '../components/OrderDetails.vue'
+import ParentComponent from '../components/ParentComponent.vue'
 
 const router = createRouter({
   history: createWebHistory(import.meta.env.BASE_URL),
@@ -68,6 +68,20 @@ const router = createRouter({
       name: 'product-delete',
       component: Products,
       props: true
+    },
+    {
+      path: '/stores/:storeId/orders/new',
+      name: 'pedidos',
+      component: DetalhesPedidos,
+      props: true,
+
+    },
+    {
+      path: '/stores/:storeId/orders/new',
+      name: 'pedidos',
+      component: ParentComponent,
+      props: true
+
     }
   ]
 })
