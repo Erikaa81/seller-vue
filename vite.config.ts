@@ -14,5 +14,13 @@ export default defineConfig({
     alias: {
       '@': fileURLToPath(new URL('./src', import.meta.url))
     }
-  }
-})
+  },
+  server: {
+    proxy: {
+      '/orders': {
+        target: 'http://localhost:3000', // URL do seu backend Rails
+        changeOrigin: true,
+      },
+    },
+  },
+});

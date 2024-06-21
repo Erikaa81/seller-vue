@@ -41,7 +41,11 @@ watch(() => props.storeId, (storeId) => {
             id: data.order.id,
             buyer_id: data.order.buyer_id,
             order_items_attributes: data.order.order_items_attributes,
-            createdAt: new Date(data.order.created_at)
+            state: data.order.state,
+            createdAt: new Date(data.order.created_at),
+            updatedAt: new Date(data.order.updat_at),
+            payment: data.order.payment
+
           };
           console.log("New order updated:", newOrder.value);
           hasNewOrder.value = true;

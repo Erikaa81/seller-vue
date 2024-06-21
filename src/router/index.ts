@@ -9,6 +9,7 @@ import AddProducts from '../components/AddProducts.vue'
 import EditProduct from '../components/EditProduct.vue'
 import DetalhesPedidos from '../components/OrderDetails.vue'
 import ParentComponent from '../components/ParentComponent.vue'
+import OrderDetails from '../components/OrderDetails.vue'
 
 const router = createRouter({
   history: createWebHistory(import.meta.env.BASE_URL),
@@ -82,7 +83,14 @@ const router = createRouter({
       component: ParentComponent,
       props: true
 
+    },
+    {
+      path: '/orders/:orderId/approve',
+      name: 'aprovados',
+      component: OrderDetails,
+      props: true
     }
+    
   ]
 })
 export default router
