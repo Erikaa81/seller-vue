@@ -64,7 +64,6 @@ const handleDeleteStore = async (storeId: number) => {
     message.value = 'Erro ao excluir loja.'
     alertType.value = 'danger'
   }
-
 return {
       message,
       alertType,
@@ -129,8 +128,9 @@ label {
   margin-bottom: 5px;
 }
 img {
-  width: 80px;
-  height: 80px;
+  width: 100px;
+  height: 100px;
+  border-radius: 20%;
 }
 
 input {
@@ -177,6 +177,8 @@ li {
   padding: 10px;
   margin-bottom: 5px;
   border: 1px solid #ddd;
-  border-radius: 4px;
+  border-radius: 25px;
+  text-align: center; /* Centraliza o texto */
+  display: block; 
 }
 </style>
